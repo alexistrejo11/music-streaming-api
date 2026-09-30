@@ -24,6 +24,7 @@ WORKDIR /app
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     DJANGO_SETTINGS_MODULE=config.settings.production \
+    WEB_PORT=8080 \
     PATH="/home/appuser/.local/bin:${PATH}"
 
 RUN apt-get update \
@@ -45,10 +46,10 @@ RUN chmod +x /entrypoint.sh \
 
 USER appuser
 
-EXPOSE 8000
+EXPOSE $WEB_PORT
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/')" || exit 1
+    CMD python -c 'import os, urllib.request; urllib.request.urlopen("http://127.0.0.1:" + os.environ["WEB_PORT"] + "/health/")' || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2", "--threads", "2", "--timeout", "120"]
+CMD ["sh", "-c", "exec gunicorn config.wsgi:application --bind 0.0.0.0:${WEB_PORT} --workers 2 --threads 2 --timeout 120"]

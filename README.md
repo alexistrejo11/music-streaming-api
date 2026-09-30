@@ -40,8 +40,8 @@ The production deployment model targets **AWS**: the application runs in Docker 
 | **Version** | 1.0.0 |
 | **Status** | Stable (core GraphQL paths); JWT GraphQL middleware still TODO |
 | **Primary API** | `POST /graphql/` |
-| **GraphiQL (dev)** | [http://127.0.0.1:8000/graphql/](http://127.0.0.1:8000/graphql/) |
-| **Admin** | [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/) |
+| **GraphiQL (dev)** | `http://127.0.0.1:${WEB_PORT}/graphql/` |
+| **Admin** | `http://127.0.0.1:${WEB_PORT}/admin/` |
 
 ---
 
@@ -127,8 +127,8 @@ cp .env.example .env
 docker compose up --build
 ```
 
-- GraphiQL: http://127.0.0.1:8000/graphql/
-- Admin: http://127.0.0.1:8000/admin/
+- GraphiQL: `http://127.0.0.1:${WEB_PORT}/graphql/`
+- Admin: `http://127.0.0.1:${WEB_PORT}/admin/`
 
 Create a superuser in another terminal:
 
@@ -136,7 +136,7 @@ Create a superuser in another terminal:
 docker compose exec web python manage.py createsuperuser
 ```
 
-The Compose stack runs the Django app at `http://127.0.0.1:8000`, PostgreSQL at `localhost:5432`, and Redis at `localhost:6379`. Source code is mounted into the app container and Gunicorn reloads after Python changes.
+The Compose stack runs the Django app at `http://127.0.0.1:${WEB_PORT}`, PostgreSQL at `localhost:5432`, and Redis at `localhost:6379`. Source code is mounted into the app container and Gunicorn reloads after Python changes.
 
 ---
 
@@ -151,7 +151,7 @@ Copy [`.env.example`](.env.example) to `.env`.
 | `DATABASE_URL` | Full PostgreSQL URL; host-local by default and overridden by Compose for the app container |
 | `ALLOWED_HOSTS` | Comma-separated domains |
 | `CORS_ALLOWED_ORIGINS` | Frontend origins for GraphQL clients |
-| `WEB_PORT` | Host port mapped to container 8000 |
+| `WEB_PORT` | API port used by Gunicorn and mapped from host to container |
 | `SECURE_SSL_REDIRECT` | Enable when TLS terminates at the app (usually `False` behind ALB) |
 
 `docker compose up --build` starts the complete local stack.
@@ -257,4 +257,4 @@ MIT License — see [LICENSE](LICENSE) file.
 |----------|-----|
 | Repository | [github.com/alexisTrejo11/music-streaming-api](https://github.com/alexisTrejo11/music-streaming-api) |
 | Documentation hub | [docs/generated/README.md](docs/generated/README.md) |
-| GraphiQL (local) | [http://127.0.0.1:8000/graphql/](http://127.0.0.1:8000/graphql/) |
+| GraphiQL (local) | `http://127.0.0.1:${WEB_PORT}/graphql/` |
